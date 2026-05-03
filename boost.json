@@ -6,6 +6,7 @@
     "guidelines": true,
     "skills": [
         "laravel-best-practices",
+        "configure-nightwatch",
         "pest-testing",
         "tailwindcss-development",
         "deploying-laravel-cloud"

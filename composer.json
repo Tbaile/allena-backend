@@ -26,6 +26,7 @@
         "ext-tokenizer": "*",
         "ext-xml": "*",
         "laravel/framework": "^13.0",
+        "laravel/nightwatch": "^1.26",
         "laravel/tinker": "^3.0"
     },
     "require-dev": {
