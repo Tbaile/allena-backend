@@ -20,7 +20,7 @@ class MeResource extends JsonResource
             'email' => $this->email,
             'role' => $this->getRoleNames()->first(),
             'must_change_password' => $this->must_change_password,
-            'created_at' => $this->created_at,
+            'created_at' => $this->created_at->toISOString(),
         ];
     }
 }
