@@ -19,10 +19,11 @@ class AppServiceProvider extends ServiceProvider
             return $user->hasRole('admin') ? true : null;
         });
 
-        Scramble::extendOpenApi(function (OpenApi $openApi): void {
-            /** @var SecurityScheme $scheme */
-            $scheme = SecurityScheme::http('bearer');
-            $openApi->secure($scheme);
-        });
+        Scramble::configure()
+            ->withDocumentTransformers(function (OpenApi $openApi): void {
+                /** @var SecurityScheme $scheme */
+                $scheme = SecurityScheme::http('bearer');
+                $openApi->secure($scheme);
+            });
     }
 }
