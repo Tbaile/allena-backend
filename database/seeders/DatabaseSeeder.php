@@ -3,23 +3,37 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Spatie\Permission\Models\Role;
 
 class DatabaseSeeder extends Seeder
 {
-    use WithoutModelEvents;
-
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
-        // User::factory(10)->create();
+        $this->seedRoles();
+        $this->seedAdmin();
+    }
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+    private function seedRoles(): void
+    {
+        foreach (['admin', 'expert', 'client'] as $role) {
+            Role::firstOrCreate(['name' => $role, 'guard_name' => 'web']);
+        }
+    }
+
+    private function seedAdmin(): void
+    {
+        $admin = User::firstOrCreate(
+            ['email' => config('app.admin_email')],
+            [
+                'name' => config('app.admin_name'),
+                'password' => config('app.admin_password'),
+                'must_change_password' => false,
+            ]
+        );
+
+        if (! $admin->hasRole('admin')) {
+            $admin->assignRole('admin');
+        }
     }
 }
