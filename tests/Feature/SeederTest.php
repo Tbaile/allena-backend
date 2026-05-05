@@ -20,6 +20,17 @@ test('admin user is seeded from env variables', function () {
         ->and($admin->must_change_password)->toBeFalse();
 });
 
+test('permissions are seeded and assigned to roles', function () {
+    $this->seed();
+
+    $expertRole = Role::findByName('expert');
+    $adminRole = Role::findByName('admin');
+
+    // Admin bypasses all checks via Gate::before — no explicit permissions needed
+    expect($adminRole->permissions)->toBeEmpty()
+        ->and($expertRole->hasPermissionTo('invite-client'))->toBeTrue();
+});
+
 test('seeder is idempotent', function () {
     $this->seed();
     $this->seed();
