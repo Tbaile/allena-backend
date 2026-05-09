@@ -4,11 +4,15 @@
     ],
     "cloud": true,
     "guidelines": true,
+    "packages": [
+        "spatie/laravel-permission"
+    ],
     "skills": [
         "laravel-best-practices",
         "configure-nightwatch",
         "pest-testing",
         "tailwindcss-development",
+        "laravel-permission-development",
         "deploying-laravel-cloud"
     ]
 }
