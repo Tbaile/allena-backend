@@ -25,5 +25,10 @@ class AppServiceProvider extends ServiceProvider
                 $scheme = SecurityScheme::http('bearer');
                 $openApi->secure($scheme);
             });
+
+        if (class_exists(\Laravel\Telescope\TelescopeServiceProvider::class)) {
+            $this->app->register(\Laravel\Telescope\TelescopeServiceProvider::class);
+            $this->app->register(TelescopeServiceProvider::class);
+        }
     }
 }
