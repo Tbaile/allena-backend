@@ -69,22 +69,6 @@ services:
   #            PHP_PORT: 9000
   #        stop_signal: SIGKILL
   #        command: [ "scheduler" ]
-  node:
-    pull_policy: never
-    build:
-      dockerfile: containers/Dockerfile
-      target: node_development
-      args:
-        UID: ${UID:-1000}
-        GID: ${GID:-1000}
-    restart: on-failure
-    depends_on:
-      - php
-    ports:
-      - '5173:5173'
-    volumes:
-      - .:/var/www/html
-    command: ['npm', 'run', 'dev', '--', '--host']
 
 
 volumes:

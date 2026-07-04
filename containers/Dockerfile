@@ -21,9 +21,6 @@ ADD --chmod=755 \
 COPY --chmod=777 containers/nginx/90-wait-fpm.sh /docker-entrypoint.d/90-wait-fpm.sh
 HEALTHCHECK CMD curl --fail --silent --output /dev/null http://localhost/status
 
-FROM node:24.14.0-alpine AS node_base
-WORKDIR /var/www/html
-
 ## Utils and dependencies building
 
 FROM php_base AS vendor
@@ -33,21 +30,6 @@ RUN composer install --no-dev --no-scripts --no-cache --ignore-platform-reqs
 
 FROM vendor AS vendor_dev
 RUN composer install --no-scripts --no-cache --ignore-platform-reqs
-
-FROM node_base AS node_build
-COPY package.json .
-COPY package-lock.json .
-RUN npm ci
-COPY app app
-COPY public public
-COPY resources resources
-COPY --from=vendor /var/www/html/vendor vendor
-COPY vite.config.ts .
-COPY tsconfig.app.json .
-COPY tsconfig.json .
-COPY tsconfig.node.json .
-COPY env.d.ts .
-RUN npm run build
 
 ## Production targets
 
@@ -65,7 +47,6 @@ COPY app app
 COPY bootstrap bootstrap
 COPY config config
 COPY database database
-COPY --from=node_build /var/www/html/public public
 COPY resources resources
 COPY routes routes
 COPY --chown=www-data:www-data storage storage
@@ -83,7 +64,6 @@ ENTRYPOINT ["entrypoint"]
 CMD ["php-fpm"]
 
 FROM nginx_base AS nginx_production
-COPY --from=node_build /var/www/html/public public
 
 ## Development targets
 
@@ -94,8 +74,6 @@ ARG ADDITIONAL_PACKAGES
 RUN apk add --no-cache \
       ${ADDITIONAL_PACKAGES} \
         git \
-        nodejs \
-        npm \
         shadow \
         sudo
 ARG UID
@@ -112,21 +90,6 @@ CMD ["php-fpm"]
 
 FROM nginx_base AS nginx_development
 
-FROM node_base AS node_development
-RUN apk add --no-cache \
-      bash \
-      shadow
-# change user id and group id of node user
-ARG UID
-ARG GID
-RUN usermod -u "$UID" node \
-    && groupmod -g "$GID" node \
-    && chown -R node:node /home/node
-USER node
-COPY --chmod=777 containers/node/entrypoint.sh /usr/local/sbin/entrypoint
-ENTRYPOINT ["entrypoint"]
-CMD ["npm", "run", "dev"]
-
 ## Testing targets
 
 FROM php_base AS testing
@@ -141,7 +104,6 @@ COPY app app
 COPY bootstrap bootstrap
 COPY config config
 COPY database database
-COPY --from=node_build /var/www/html/public public
 COPY resources resources
 COPY routes routes
 COPY --chown=www-data:www-data storage storage
