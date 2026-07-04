@@ -1,3 +1,4 @@
+name: fairly-backend
 services:
   nginx:
     pull_policy: never
