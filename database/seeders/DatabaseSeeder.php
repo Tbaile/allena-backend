@@ -13,6 +13,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->seedRoles();
         $this->seedAdmin();
+        $this->call(ExerciseSeeder::class);
     }
 
     private function seedRoles(): void
