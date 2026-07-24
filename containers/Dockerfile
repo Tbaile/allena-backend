@@ -1,11 +1,10 @@
-ARG PHP_EXTENSIONS="ctype curl dom fileinfo filter hash mbstring openssl pcre pdo pdo_pgsql pgsql session tokenizer xml"
+ARG PHP_EXTENSIONS="pdo_pgsql pgsql"
 ARG ADDITIONAL_PACKAGES="bash postgresql17-client"
 
 ## Base images
 
 FROM php:8.5.4-fpm-alpine AS php_base
 WORKDIR /var/www/html
-# install software needed for all environments
 COPY --from=docker.io/composer:2.9.5 /usr/bin/composer /usr/local/bin/composer
 COPY --from=docker.io/mlocati/php-extension-installer:2.10 /usr/bin/install-php-extensions /usr/local/sbin/install-php-extensions
 ADD --chmod=777 \
@@ -35,7 +34,7 @@ RUN composer install --no-scripts --no-cache --ignore-platform-reqs
 
 FROM php_base AS php_production
 ARG PHP_EXTENSIONS
-RUN install-php-extensions ${PHP_EXTENSIONS} opcache
+RUN install-php-extensions ${PHP_EXTENSIONS}
 ARG ADDITIONAL_PACKAGES
 RUN apk add --no-cache ${ADDITIONAL_PACKAGES}
 COPY containers/php/config/conf.d/opcache.ini /usr/local/etc/php/conf.d/opcache.ini
@@ -116,4 +115,3 @@ RUN composer check-platform-reqs \
     && php artisan key:generate --env=testing
 USER www-data
 CMD ["php", "artisan", "test"]
-
