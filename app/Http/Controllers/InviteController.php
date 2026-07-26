@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\InviteClientRequest;
-use App\Http\Requests\InviteExpertRequest;
 use App\Http\Requests\InviteRequest;
 use App\Http\Resources\UserResource;
 use App\Mail\InviteMail;
@@ -12,6 +10,7 @@ use Dedoc\Scramble\Attributes\Endpoint;
 use Dedoc\Scramble\Attributes\Group;
 use Dedoc\Scramble\Attributes\Response;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Routing\Attributes\Controllers\Authorize;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
@@ -20,7 +19,8 @@ class InviteController extends Controller
     #[Endpoint(title: 'Invite expert', description: 'Create a new expert account. A temporary password is sent by email. The invited user must change their password on first login.')]
     #[Group('Invite')]
     #[Response(status: 201, type: 'UserResource')]
-    public function inviteExpert(InviteExpertRequest $request): JsonResponse
+    #[Authorize('inviteExpert', User::class)]
+    public function inviteExpert(InviteRequest $request): JsonResponse
     {
         $user = $this->createUser($request, 'expert');
 
@@ -30,7 +30,8 @@ class InviteController extends Controller
     #[Endpoint(title: 'Invite client', description: 'Create a new client account. A temporary password is sent by email. The invited user must change their password on first login.')]
     #[Group('Invite')]
     #[Response(status: 201, type: 'UserResource')]
-    public function inviteClient(InviteClientRequest $request): JsonResponse
+    #[Authorize('inviteClient', User::class)]
+    public function inviteClient(InviteRequest $request): JsonResponse
     {
         $user = $this->createUser($request, 'client');
 
