@@ -24,7 +24,7 @@ test('exercises can be filtered by category slug', function () {
     Exercise::factory()->for($cardio, 'category')->create();
 
     $this->actingAs(User::factory()->create())
-        ->getJson('/api/v1/exercises?category=yoga')
+        ->getJson('/api/v1/exercises?filter[category]=yoga')
         ->assertOk()
         ->assertJsonCount(1, 'data')
         ->assertJsonPath('data.0.category.slug', 'yoga');
@@ -37,7 +37,7 @@ test('exercises can be filtered by tag slug', function () {
     Exercise::factory()->create();
 
     $this->actingAs(User::factory()->create())
-        ->getJson('/api/v1/exercises?tag=knee')
+        ->getJson('/api/v1/exercises?filter[tag]=knee')
         ->assertOk()
         ->assertJsonCount(1, 'data')
         ->assertJsonPath('data.0.id', $withTag->id);
@@ -49,20 +49,32 @@ test('exercises can be searched by name and description', function () {
     Exercise::factory()->create(['name' => 'Jumping Jacks', 'description' => 'Cardio move.']);
 
     $this->actingAs(User::factory()->create())
-        ->getJson('/api/v1/exercises?search=knee')
+        ->getJson('/api/v1/exercises?filter[search]=knee')
         ->assertOk()
         ->assertJsonCount(2, 'data');
 });
 
-test('exercises are paginated by per_page', function () {
-    Exercise::factory()->count(5)->create();
+test('exercises are always paginated at 20 per page', function () {
+    Exercise::factory()->count(25)->create();
 
     $this->actingAs(User::factory()->create())
-        ->getJson('/api/v1/exercises?per_page=2')
+        ->getJson('/api/v1/exercises')
         ->assertOk()
-        ->assertJsonCount(2, 'data')
-        ->assertJsonPath('meta.per_page', 2)
-        ->assertJsonPath('meta.total', 5);
+        ->assertJsonCount(20, 'data')
+        ->assertJsonPath('meta.per_page', 20)
+        ->assertJsonPath('meta.total', 25)
+        ->assertJsonPath('meta.last_page', 2);
+
+    $this->actingAs(User::factory()->create())
+        ->getJson('/api/v1/exercises?page=2')
+        ->assertOk()
+        ->assertJsonCount(5, 'data');
+});
+
+test('unknown filter keys are rejected', function () {
+    $this->actingAs(User::factory()->create())
+        ->getJson('/api/v1/exercises?filter[bogus]=x')
+        ->assertUnprocessable();
 });
 
 test('authenticated user can view a single exercise', function () {

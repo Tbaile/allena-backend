@@ -7,30 +7,34 @@ use App\Http\Resources\ExerciseResource;
 use App\Models\Exercise;
 use Dedoc\Scramble\Attributes\Endpoint;
 use Dedoc\Scramble\Attributes\Group;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class ExerciseController extends Controller
 {
-    #[Endpoint(title: 'List exercises', description: 'Browse the shared exercise library. Filter by category slug, tag slug, or a search term matching name/description. Paginated.')]
+    #[Endpoint(title: 'List exercises', description: 'Browse the shared exercise library. Filter by category slug (filter[category]), tag slug (filter[tag]), or a search term matching name/description (filter[search]). Paginated at 20 per page.')]
     #[Group('Exercises')]
     public function index(IndexExerciseRequest $request): AnonymousResourceCollection
     {
-        $exercises = Exercise::query()
+        $exercises = QueryBuilder::for(Exercise::class)
+            ->allowedFilters(
+                AllowedFilter::exact('category', 'category.slug'),
+                AllowedFilter::exact('tag', 'tags.slug'),
+                AllowedFilter::callback('search', function (Builder $query, mixed $value): void {
+                    if (! is_string($value)) {
+                        return;
+                    }
+
+                    $query->where(function (Builder $q) use ($value): void {
+                        $q->where('name', 'ilike', "%{$value}%")
+                            ->orWhere('description', 'ilike', "%{$value}%");
+                    });
+                })->delimiter(''),
+            )
             ->with(['category', 'tags'])
-            ->when($request->filled('category'), function ($query) use ($request) {
-                $query->whereHas('category', fn ($q) => $q->where('slug', $request->string('category')));
-            })
-            ->when($request->filled('tag'), function ($query) use ($request) {
-                $query->whereHas('tags', fn ($q) => $q->where('slug', $request->string('tag')));
-            })
-            ->when($request->filled('search'), function ($query) use ($request) {
-                $search = $request->string('search')->toString();
-                $query->where(function ($q) use ($search) {
-                    $q->where('name', 'ilike', "%{$search}%")
-                        ->orWhere('description', 'ilike', "%{$search}%");
-                });
-            })
-            ->paginate($request->integer('per_page', 20));
+            ->paginate(20);
 
         return ExerciseResource::collection($exercises);
     }

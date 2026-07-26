@@ -17,10 +17,10 @@ class IndexExerciseRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'category' => ['sometimes', 'string'],
-            'tag' => ['sometimes', 'string'],
-            'search' => ['sometimes', 'string'],
-            'per_page' => ['sometimes', 'integer', 'min:1', 'max:100'],
+            'filter' => ['sometimes', 'array:category,tag,search'],
+            'filter.category' => ['sometimes', 'string'],
+            'filter.tag' => ['sometimes', 'string'],
+            'filter.search' => ['sometimes', 'string'],
         ];
     }
 }
