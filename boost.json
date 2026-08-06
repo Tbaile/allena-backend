@@ -5,13 +5,17 @@
     "cloud": true,
     "guidelines": true,
     "packages": [
-        "spatie/laravel-permission"
+        "spatie/laravel-permission",
+        "spatie/laravel-query-builder"
     ],
     "skills": [
+        "infer-conventions",
         "laravel-best-practices",
         "configure-nightwatch",
         "pest-testing",
+        "tailwindcss-development",
         "laravel-permission-development",
+        "laravel-query-builder",
         "deploying-laravel-cloud"
     ]
 }
