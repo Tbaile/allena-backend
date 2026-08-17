@@ -1,12 +1,10 @@
 <?php
 
 use App\Models\User;
-
-beforeEach(function () {
-    $this->seed();
-});
+use Spatie\Permission\Models\Role;
 
 test('user can login with valid credentials', function () {
+    Role::findOrCreate('expert', 'web');
     $user = User::factory()->create(['password' => 'password123']);
     $user->assignRole('expert');
 

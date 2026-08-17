@@ -1,12 +1,11 @@
 <?php
 
 use App\Models\User;
-
-beforeEach(function () {
-    $this->seed();
-});
+use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Role;
 
 test('authenticated user can view their profile', function () {
+    Role::findOrCreate('client', 'web');
     $user = User::factory()->create(['must_change_password' => true]);
     $user->assignRole('client');
 
@@ -36,7 +35,7 @@ test('user can update their name', function () {
     expect($user->fresh()->name)->toBe('New Name');
 });
 
-test('user can update their password and must_change_password is cleared', function () {
+test('forced password change does not require the current password', function () {
     $user = User::factory()->create(['must_change_password' => true]);
 
     $this->actingAs($user)
@@ -50,8 +49,47 @@ test('user can update their password and must_change_password is cleared', funct
     expect($user->fresh()->must_change_password)->toBeFalse();
 });
 
+test('changing password on a normal account requires the current password', function () {
+    $user = User::factory()->create(['must_change_password' => false]);
+
+    $this->actingAs($user)
+        ->putJson('/api/v1/me', [
+            'password' => 'newpassword123',
+            'password_confirmation' => 'newpassword123',
+        ])
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors(['current_password']);
+});
+
+test('changing password succeeds with the correct current password', function () {
+    $user = User::factory()->create(['must_change_password' => false]);
+
+    $this->actingAs($user)
+        ->putJson('/api/v1/me', [
+            'current_password' => 'password',
+            'password' => 'newpassword123',
+            'password_confirmation' => 'newpassword123',
+        ])
+        ->assertOk();
+
+    expect(Hash::check('newpassword123', $user->fresh()->password))->toBeTrue();
+});
+
+test('changing password fails with an incorrect current password', function () {
+    $user = User::factory()->create(['must_change_password' => false]);
+
+    $this->actingAs($user)
+        ->putJson('/api/v1/me', [
+            'current_password' => 'wrong-password',
+            'password' => 'newpassword123',
+            'password_confirmation' => 'newpassword123',
+        ])
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors(['current_password']);
+});
+
 test('password must be at least 8 characters', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->create(['must_change_password' => true]);
 
     $this->actingAs($user)
         ->putJson('/api/v1/me', [
