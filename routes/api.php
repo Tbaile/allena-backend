@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\AvatarController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ExerciseController;
 use App\Http\Controllers\InviteController;
@@ -15,6 +16,9 @@ Route::prefix('v1')->group(function () {
         Route::post('auth/logout', [AuthController::class, 'logout']);
         Route::get('me', [MeController::class, 'show']);
         Route::put('me', [MeController::class, 'update']);
+        Route::get('me/avatar', [AvatarController::class, 'show']);
+        Route::post('me/avatar', [AvatarController::class, 'store']);
+        Route::delete('me/avatar', [AvatarController::class, 'destroy']);
         Route::post('users/invite', [InviteController::class, 'inviteExpert']);
         Route::post('clients/invite', [InviteController::class, 'inviteClient']);
 

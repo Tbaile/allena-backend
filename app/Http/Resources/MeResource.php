@@ -20,7 +20,20 @@ class MeResource extends JsonResource
             'email' => $this->email,
             'role' => $this->getRoleNames()->first(),
             'must_change_password' => $this->must_change_password,
+            'avatar_url' => $this->avatarUrl(),
             'created_at' => $this->created_at?->toISOString(),
         ];
+    }
+
+    /**
+     * The version suffix busts the client image cache when the photo is replaced.
+     */
+    private function avatarUrl(): ?string
+    {
+        if ($this->avatar_path === null) {
+            return null;
+        }
+
+        return url('/api/v1/me/avatar').'?v='.substr(sha1($this->avatar_path), 0, 8);
     }
 }
