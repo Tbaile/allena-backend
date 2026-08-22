@@ -39,6 +39,14 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - .:/var/www/html
+  test:
+    profiles:
+      - test
+    pull_policy: never
+    build:
+      dockerfile: containers/Dockerfile
+      target: testing
+
   database:
     image: postgres:18-alpine
     restart: on-failure

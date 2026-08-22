@@ -28,8 +28,8 @@ class ExerciseController extends Controller
                     }
 
                     $query->where(function (Builder $q) use ($value): void {
-                        $q->where('name', 'ilike', "%{$value}%")
-                            ->orWhere('description', 'ilike', "%{$value}%");
+                        $q->whereLike('name', "%{$value}%", caseSensitive: false)
+                            ->orWhereLike('description', "%{$value}%", caseSensitive: false);
                     });
                 })->delimiter(''),
             )
