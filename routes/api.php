@@ -8,6 +8,7 @@ use App\Http\Controllers\InviteController;
 use App\Http\Controllers\MeController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\WorkoutPlanController;
+use App\Http\Controllers\WorkoutSessionController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
@@ -30,5 +31,7 @@ Route::prefix('v1')->group(function () {
 
         Route::get('me/workout-plans', [WorkoutPlanController::class, 'index']);
         Route::get('me/workout-plans/{workoutPlan}', [WorkoutPlanController::class, 'show']);
+        Route::post('me/workout-plans/{workoutPlan}/sessions', [WorkoutSessionController::class, 'store']);
+        Route::get('me/workout-sessions', [WorkoutSessionController::class, 'index']);
     });
 });

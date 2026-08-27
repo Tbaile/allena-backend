@@ -8,7 +8,16 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Carbon;
 
+/**
+ * @property Carbon $started_at
+ * @property Carbon|null $completed_at
+ *
+ * Aggregates added by the history query, absent on a plain model instance.
+ * @property-read int|null $set_logs_count
+ * @property-read numeric-string|float|int|null $total_volume
+ */
 #[Fillable(['workout_plan_id', 'user_id', 'started_at', 'completed_at', 'notes'])]
 class WorkoutSession extends Model
 {

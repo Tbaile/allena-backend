@@ -15,4 +15,12 @@ class WorkoutPlanPolicy
     {
         return $workoutPlan->client_id === $user->id;
     }
+
+    /**
+     * Only the client a plan was assigned to may log workouts against it.
+     */
+    public function logSession(User $user, WorkoutPlan $workoutPlan): bool
+    {
+        return $this->view($user, $workoutPlan);
+    }
 }
