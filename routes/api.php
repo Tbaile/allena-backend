@@ -7,6 +7,7 @@ use App\Http\Controllers\ExerciseController;
 use App\Http\Controllers\InviteController;
 use App\Http\Controllers\MeController;
 use App\Http\Controllers\TagController;
+use App\Http\Controllers\WorkoutPlanController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
@@ -26,5 +27,8 @@ Route::prefix('v1')->group(function () {
         Route::get('exercises/{exercise}', [ExerciseController::class, 'show']);
         Route::get('categories', [CategoryController::class, 'index']);
         Route::get('tags', [TagController::class, 'index']);
+
+        Route::get('me/workout-plans', [WorkoutPlanController::class, 'index']);
+        Route::get('me/workout-plans/{workoutPlan}', [WorkoutPlanController::class, 'show']);
     });
 });
