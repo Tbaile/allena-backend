@@ -11,8 +11,8 @@ class WorkoutPlanSeeder extends Seeder
 {
     public function run(): void
     {
-        $expert = User::where('email', 'expert@fairly.app')->first();
-        $client = User::where('email', 'customer@fairly.app')->first();
+        $expert = User::where('email', 'expert@allena.app')->first();
+        $client = User::where('email', 'customer@allena.app')->first();
 
         if ($expert === null || $client === null) {
             return;

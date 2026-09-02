@@ -9,8 +9,8 @@ class DemoUserSeeder extends Seeder
 {
     public function run(): void
     {
-        $this->seedUser('Fairly Expert', 'expert@fairly.app', 'expert');
-        $this->seedUser('Fairly Customer', 'customer@fairly.app', 'client', true);
+        $this->seedUser('Allena Expert', 'expert@allena.app', 'expert');
+        $this->seedUser('Allena Customer', 'customer@allena.app', 'client', true);
     }
 
     private function seedUser(string $name, string $email, string $role, bool $mustChangePassword = false): void

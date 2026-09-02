@@ -1,10 +1,10 @@
-# Fairly — Backend API
+# Allena — Backend API
 
-Laravel 13 REST API backend for the **Fairly** fitness planner. Consumed by native mobile apps (Android first).
+Laravel 13 REST API backend for the **Allena** fitness planner. Consumed by native mobile apps (Android first).
 
-## What is Fairly?
+## What is Allena?
 
-Fairly connects fitness **experts** with their **clients**. Experts build a personalised exercise programme for each client — picking exercises from a shared library, attaching a weekly schedule (days, sets, reps), and adding guidance notes. Clients view their daily programme and log each completed session. Experts track adherence over time.
+Allena connects fitness **experts** with their **clients**. Experts build a personalised exercise programme for each client — picking exercises from a shared library, attaching a weekly schedule (days, sets, reps), and adding guidance notes. Clients view their daily programme and log each completed session. Experts track adherence over time.
 
 ## Tech Stack
 

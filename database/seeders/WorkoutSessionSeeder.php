@@ -22,7 +22,7 @@ class WorkoutSessionSeeder extends Seeder
 
     public function run(): void
     {
-        $client = User::where('email', 'customer@fairly.app')->first();
+        $client = User::where('email', 'customer@allena.app')->first();
 
         if ($client === null) {
             return;

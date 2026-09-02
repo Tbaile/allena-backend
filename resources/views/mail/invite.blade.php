@@ -1,6 +1,6 @@
 Hello {{ $invitedUser->name }},
 
-You have been invited to Fairly. Use the credentials below to log in for the first time:
+You have been invited to Allena. Use the credentials below to log in for the first time:
 
 Email: {{ $invitedUser->email }}
 Password: {{ $temporaryPassword }}

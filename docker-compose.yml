@@ -1,4 +1,4 @@
-name: fairly-backend
+name: allena-backend
 services:
   nginx:
     pull_policy: never

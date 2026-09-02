@@ -1,12 +1,12 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "fairly/backend",
+    "name": "allena/backend",
     "type": "project",
-    "description": "Backend for fairly app.",
+    "description": "Backend for allena app.",
     "keywords": [
         "laravel",
         "framework",
-        "fairly",
+        "allena",
         "backend"
     ],
     "license": "MIT",

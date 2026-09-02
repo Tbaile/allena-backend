@@ -27,7 +27,7 @@ return [
         /*
          * Description rendered on the home page of the API documentation (`/docs/api`).
          */
-        'description' => 'REST API for the Fairly fitness planner.',
+        'description' => 'REST API for the Allena fitness planner.',
     ],
 
     /*

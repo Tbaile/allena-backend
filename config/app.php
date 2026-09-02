@@ -124,7 +124,7 @@ return [
     ],
 
     'admin_name' => env('ADMIN_NAME', 'Admin'),
-    'admin_email' => env('ADMIN_EMAIL', 'admin@fairly.app'),
+    'admin_email' => env('ADMIN_EMAIL', 'admin@allena.app'),
     'admin_password' => env('ADMIN_PASSWORD', 'changeme'),
 
 ];

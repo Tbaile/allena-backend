@@ -20,7 +20,7 @@ class InviteMail extends Mailable
 
     public function envelope(): Envelope
     {
-        return new Envelope(subject: 'You have been invited to Fairly');
+        return new Envelope(subject: 'You have been invited to Allena');
     }
 
     public function content(): Content
