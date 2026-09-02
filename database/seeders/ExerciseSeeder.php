@@ -33,6 +33,11 @@ class ExerciseSeeder extends Seeder
                 ),
             ]);
 
+        /** @var array<string, string> $videoUrls Demo footage, keyed by exercise name. */
+        $videoUrls = [
+            'Barbell Back Squat' => 'https://www.youtube.com/watch?v=ultWZbUMPL8',
+        ];
+
         $exercises = [
             // Free Body
             ['Seated Knee Extension', 'Sit upright, extend one leg slowly until straight, hold, then lower.', 'Free Body', ['knee', 'mobility']],
@@ -249,9 +254,12 @@ class ExerciseSeeder extends Seeder
                 [
                     'description' => $description,
                     'category_id' => $categories[$categoryName]->id,
-                    'video_url' => null,
+                    'video_url' => $videoUrls[$name] ?? null,
                 ],
             );
+
+            // firstOrCreate skips rows seeded before a URL existed, so sync it on every run.
+            $exercise->fill(['video_url' => $videoUrls[$name] ?? null])->save();
 
             $exercise->tags()->syncWithoutDetaching(
                 collect($tagNames)->map(fn (string $t) => $tags[$t]->id)->all(),
