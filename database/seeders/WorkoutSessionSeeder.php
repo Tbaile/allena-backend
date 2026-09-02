@@ -12,13 +12,26 @@ use Illuminate\Support\Carbon;
 class WorkoutSessionSeeder extends Seeder
 {
     /**
-     * Weeks before today that the demo client trained. The gaps are deliberate: the progress
-     * chart should show rest weeks, not an unbroken run of bars.
+     * Weeks before today that the demo client trained, oldest first. Week 4 is deliberately
+     * missing so the progress chart shows one clear skipped week.
      */
-    private const WEEKS_TRAINED = [7, 6, 4, 3, 1, 0];
+    private const WEEKS_TRAINED = [7, 6, 5, 3, 2, 1];
 
-    /** Added to each prescribed weight per week, so the chart trends upwards. */
-    private const WEEKLY_PROGRESSION_KG = 2.5;
+    /**
+     * Weight added to every prescribed load that week, keyed by weeks-ago. The client builds
+     * up over weeks 7-5, misses week 4, then returns lighter and rebuilds without reaching the
+     * earlier peak, so weekly volume drops after the skipped week.
+     *
+     * @var array<int, float>
+     */
+    private const WEIGHT_DELTA_KG = [
+        7 => 0.0,
+        6 => 2.5,
+        5 => 5.0,
+        3 => -2.5,
+        2 => 0.0,
+        1 => 2.5,
+    ];
 
     public function run(): void
     {
@@ -28,7 +41,10 @@ class WorkoutSessionSeeder extends Seeder
             return;
         }
 
-        $plan = WorkoutPlan::where('client_id', $client->id)->with('items')->first();
+        $plan = WorkoutPlan::where('client_id', $client->id)
+            ->where('name', WorkoutPlanSeeder::CHART_PLAN_NAME)
+            ->with('items')
+            ->first();
 
         if ($plan === null || $plan->items->isEmpty()) {
             return;
@@ -39,23 +55,24 @@ class WorkoutSessionSeeder extends Seeder
             return;
         }
 
-        $oldest = max(self::WEEKS_TRAINED);
-
         foreach (self::WEEKS_TRAINED as $weeksAgo) {
-            $this->seedSession($plan, $client, $weeksAgo, $oldest);
+            $this->seedSession($plan, $client, $weeksAgo);
         }
     }
 
-    private function seedSession(WorkoutPlan $plan, User $client, int $weeksAgo, int $oldest): void
+    private function seedSession(WorkoutPlan $plan, User $client, int $weeksAgo): void
     {
-        $startedAt = Carbon::now()->subWeeks($weeksAgo)->setTime(18, 0);
-        $addedWeight = (($oldest - $weeksAgo) * self::WEEKLY_PROGRESSION_KG);
+        $startedAt = Carbon::now()
+            ->subWeeks($weeksAgo)
+            ->setTime(random_int(6, 21), random_int(0, 59));
+
+        $addedWeight = self::WEIGHT_DELTA_KG[$weeksAgo] ?? 0.0;
 
         $session = WorkoutSession::create([
             'workout_plan_id' => $plan->id,
             'user_id' => $client->id,
             'started_at' => $startedAt,
-            'completed_at' => $startedAt->copy()->addMinutes(52),
+            'completed_at' => $startedAt->copy()->addMinutes(random_int(38, 70)),
         ]);
 
         foreach ($plan->items as $item) {
